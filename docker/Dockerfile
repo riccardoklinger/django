@@ -20,7 +20,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
   postgresql-client-12 \
   postgresql-contrib-12 \
   postgresql-12-postgis-3 \
-  postgresql-12-postgis-3-scripts \
+  postgresql-12-postgis-3-scripts
 
 # switch USER
 USER postgres
@@ -41,15 +41,15 @@ EXPOSE 5432
 
 RUN    /etc/init.d/postgresql start &&\
     psql --command "CREATE USER admin WITH SUPERUSER PASSWORD 'admin';" &&\
-    createdb -O data data &&\
-    psql -d osmdata --command "CREATE EXTENSION IF NOT EXISTS postgis;" &&\
-    psql -d osmdata --command "CREATE EXTENSION IF NOT EXISTS postgis_topology;" &&\
-    psql -d osmdata --command "CREATE EXTENSION hstore;" &&\
-    psql -d osmdata --command "CREATE SCHEMA import;"
+    createdb -O admin data &&\
+    psql -d data --command "CREATE EXTENSION IF NOT EXISTS postgis;" &&\
+    psql -d data --command "CREATE EXTENSION IF NOT EXISTS postgis_topology;" &&\
+    psql -d data --command "CREATE EXTENSION hstore;" &&\
+    psql -d data --command "CREATE SCHEMA import;"
 
 
 # Add VOLUMEs to allow backup of config, logs and databases
-VOLUME  ["/etc/postgresql", "/var/log/postgresql", "/var/lib/postgresql"]
+VOLUME  ["/etc/postgresql", "/var/log/postgresql", "/var/lib/postgresql", "/home/osmdata/gpkg"]
 
 # Set the default command to run when starting the container
 CMD ["/usr/lib/postgresql/12/bin/postgres", "-D", "/var/lib/postgresql/12/main", "-c", "config_file=/etc/postgresql/12/main/postgresql.conf"]
